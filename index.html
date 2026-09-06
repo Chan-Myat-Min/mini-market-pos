@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FreshLane Mini Market POS</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <link rel="stylesheet" href="css/print.css" />
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar" id="sidebar">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">🛒</div>
+          <div>
+            <h1 id="store-title">Mini Market POS</h1>
+            <p>Cashier workspace</p>
+          </div>
+        </div>
+        <nav class="nav" id="nav">
+          <button class="nav-btn is-active" data-nav="dashboard">Dashboard</button>
+          <button class="nav-btn" data-nav="pos">POS / Checkout</button>
+          <button class="nav-btn" data-nav="products">Products</button>
+          <button class="nav-btn" data-nav="inventory">Inventory</button>
+          <button class="nav-btn" data-nav="categories">Categories</button>
+          <button class="nav-btn" data-nav="sales">Sales</button>
+          <button class="nav-btn" data-nav="customers">Customers</button>
+          <button class="nav-btn" data-nav="suppliers">Suppliers</button>
+          <button class="nav-btn" data-nav="reports">Reports</button>
+          <button class="nav-btn" data-nav="settings">Settings</button>
+        </nav>
+        <div class="sidebar-foot" id="sidebar-foot"></div>
+      </aside>
+
+      <div class="workspace">
+        <header class="topbar">
+          <button class="menu-toggle" id="menu-toggle" type="button">Menu</button>
+          <strong id="page-label">Dashboard</strong>
+          <div class="clock" id="clock"></div>
+        </header>
+
+        <main>
+          <section class="view is-active" id="view-dashboard" data-view="dashboard"></section>
+          <section class="view" id="view-pos" data-view="pos"></section>
+          <section class="view" id="view-products" data-view="products"></section>
+          <section class="view" id="view-inventory" data-view="inventory"></section>
+          <section class="view" id="view-categories" data-view="categories"></section>
+          <section class="view" id="view-sales" data-view="sales"></section>
+          <section class="view" id="view-customers" data-view="customers"></section>
+          <section class="view" id="view-suppliers" data-view="suppliers"></section>
+          <section class="view" id="view-reports" data-view="reports"></section>
+          <section class="view" id="view-settings" data-view="settings"></section>
+        </main>
+      </div>
+    </div>
+
+    <div class="overlay" id="overlay"></div>
+    <div class="toast-wrap" id="toasts"></div>
+    <div class="modal-backdrop" id="modal-backdrop">
+      <div class="modal" id="modal" role="dialog" aria-modal="true"></div>
+    </div>
+
+    <div class="shortcuts" id="shortcuts">
+      <div class="shortcuts-panel">
+        <strong>Keyboard shortcuts</strong>
+        <p><span class="k">F1</span> Product search</p>
+        <p><span class="k">F2</span> Barcode</p>
+        <p><span class="k">F4</span> Complete sale</p>
+        <p><span class="k">F8</span> Clear cart</p>
+        <p><span class="k">Esc</span> Close modal</p>
+        <p><span class="k">Enter</span> Add / search</p>
+      </div>
+      <button class="btn" id="shortcut-toggle" type="button">Shortcuts</button>
+    </div>
+
+    <div id="print-root" hidden></div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/settings.js"></script>
+    <script src="js/products.js"></script>
+    <script src="js/inventory.js"></script>
+    <script src="js/customers.js"></script>
+    <script src="js/suppliers.js"></script>
+    <script src="js/cart.js"></script>
+    <script src="js/sales.js"></script>
+    <script src="js/reports.js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>
