@@ -520,6 +520,16 @@ th {
   border-bottom: 1px solid var(--line);
 }
 
+.checkout-customer-form {
+  margin: 12px 0;
+  padding: 12px;
+  box-shadow: none;
+}
+
+.checkout-customer-form h4 {
+  margin: 0;
+}
+
 .qty-row {
   display: flex;
   align-items: center;

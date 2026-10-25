@@ -12,6 +12,7 @@ export default function PosView({ searchRef, barcodeRef, onComplete, onClear, to
   const { rev, refresh } = useApp();
   const [query, setQuery] = useState("");
   const [categoryId, setCategoryId] = useState("");
+  const [showNewCustomer, setShowNewCustomer] = useState(false);
   const barcode = useRef(null);
 
   const catalog = useMemo(
@@ -45,6 +46,20 @@ export default function PosView({ searchRef, barcodeRef, onComplete, onClear, to
     if (list.length === 1) return addProduct(list[0].id);
     setQuery(value);
     if (!list.length) toast("No product found.", "error");
+  }
+
+  function createCustomer(e) {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const result = customers.upsert({
+      name: form.customerName.value,
+      phone: form.customerPhone.value,
+    });
+    if (!result.ok) return toast(result.errors[0], "error");
+    cart.setCustomer(result.customer.id);
+    setShowNewCustomer(false);
+    toast("Customer saved");
+    refresh();
   }
 
   return (
@@ -138,6 +153,11 @@ export default function PosView({ searchRef, barcodeRef, onComplete, onClear, to
               className="select"
               value={open.customerId || people.find((c) => c.walkIn)?.id || ""}
               onChange={(e) => {
+                if (e.target.value === "__new_customer__") {
+                  setShowNewCustomer(true);
+                  return;
+                }
+                setShowNewCustomer(false);
                 cart.setCustomer(e.target.value);
                 refresh();
               }}
@@ -148,8 +168,28 @@ export default function PosView({ searchRef, barcodeRef, onComplete, onClear, to
                   {c.walkIn ? " (walk-in)" : ""}
                 </option>
               ))}
+              <option value="__new_customer__">+ Add new customer</option>
             </select>
           </label>
+          {showNewCustomer ? (
+            <form className="card form-grid checkout-customer-form" onSubmit={createCustomer}>
+              <h4 className="full">New customer</h4>
+              <label className="field full">
+                Customer name
+                <input className="input" name="customerName" autoFocus required />
+              </label>
+              <label className="field full">
+                Phone number
+                <input className="input" name="customerPhone" type="tel" required />
+              </label>
+              <div className="toolbar full">
+                <button className="btn btn-primary" type="submit">Save customer</button>
+                <button className="btn btn-ghost" type="button" onClick={() => setShowNewCustomer(false)}>
+                  Cancel
+                </button>
+              </div>
+            </form>
+          ) : null}
           {t.items.length ? (
             t.items.map((i) => (
               <div className="cart-item" key={i.productId}>
