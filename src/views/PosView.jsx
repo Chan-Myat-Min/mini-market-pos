@@ -12,6 +12,7 @@ export default function PosView({ searchRef, barcodeRef, onComplete, onClear, to
   const { rev, refresh } = useApp();
   const [query, setQuery] = useState("");
   const [categoryId, setCategoryId] = useState("");
+  const [customerSearch, setCustomerSearch] = useState("");
   const [showNewCustomer, setShowNewCustomer] = useState(false);
   const barcode = useRef(null);
 
@@ -22,7 +23,17 @@ export default function PosView({ searchRef, barcodeRef, onComplete, onClear, to
   const t = cart.totals();
   const open = cart.getCart();
   const cats = products.getCategories();
-  const people = customers.getCustomers();
+  const people = useMemo(() => customers.getCustomers(), [rev]);
+  const selectedCustomerId = open.customerId || people.find((c) => c.walkIn)?.id || "";
+  const selectedCustomer = people.find((c) => c.id === selectedCustomerId);
+  const matchingPeople = useMemo(() => {
+    const search = customerSearch.trim().toLocaleLowerCase();
+    if (!search) return people;
+    return people.filter((c) => `${c.name} ${c.phone || ""}`.toLocaleLowerCase().includes(search));
+  }, [people, customerSearch]);
+  const visiblePeople = selectedCustomer && !matchingPeople.some((c) => c.id === selectedCustomer.id)
+    ? [selectedCustomer, ...matchingPeople]
+    : matchingPeople;
   const store = settings.getSettings();
   const cash = t.paymentMethod === "cash";
 
@@ -58,6 +69,7 @@ export default function PosView({ searchRef, barcodeRef, onComplete, onClear, to
     if (!result.ok) return toast(result.errors[0], "error");
     cart.setCustomer(result.customer.id);
     setShowNewCustomer(false);
+    setCustomerSearch("");
     toast("Customer saved");
     refresh();
   }
@@ -149,9 +161,16 @@ export default function PosView({ searchRef, barcodeRef, onComplete, onClear, to
           <h3>Current cart</h3>
           <label className="field">
             Customer
+            <input
+              className="input customer-search"
+              type="search"
+              placeholder="Search customer names or phone"
+              value={customerSearch}
+              onChange={(e) => setCustomerSearch(e.target.value)}
+            />
             <select
               className="select"
-              value={open.customerId || people.find((c) => c.walkIn)?.id || ""}
+              value={selectedCustomerId}
               onChange={(e) => {
                 if (e.target.value === "__new_customer__") {
                   setShowNewCustomer(true);
@@ -159,13 +178,14 @@ export default function PosView({ searchRef, barcodeRef, onComplete, onClear, to
                 }
                 setShowNewCustomer(false);
                 cart.setCustomer(e.target.value);
+                setCustomerSearch("");
                 refresh();
               }}
             >
-              {people.map((c) => (
+              {visiblePeople.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
-                  {c.walkIn ? " (walk-in)" : ""}
+                  {c.phone ? ` · ${c.phone}` : c.walkIn ? " (walk-in)" : ""}
                 </option>
               ))}
               <option value="__new_customer__">+ Add new customer</option>

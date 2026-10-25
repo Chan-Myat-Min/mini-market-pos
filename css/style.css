@@ -520,6 +520,10 @@ th {
   border-bottom: 1px solid var(--line);
 }
 
+.customer-search {
+  margin-bottom: 8px;
+}
+
 .checkout-customer-form {
   margin: 12px 0;
   padding: 12px;
