@@ -4,7 +4,7 @@ import * as storage from "../lib/storage.js";
 import { Field } from "../components/Widgets.jsx";
 
 export default function SettingsView({ toast, confirm }) {
-  const { rev, refresh } = useApp();
+  const { rev, refresh, language, setLanguage } = useApp();
   const s = settings.getSettings();
 
   return (
@@ -14,6 +14,20 @@ export default function SettingsView({ toast, confirm }) {
           <h2>Settings</h2>
           <p>Store identity, tax, currency, and theme. Saved in LocalStorage.</p>
         </div>
+      </div>
+      <div className="card form-grid" style={{ marginBottom: 16 }}>
+        <Field label="Language">
+          <select
+            className="select"
+            name="language"
+            value={language}
+            onChange={(e) => setLanguage(e.target.value)}
+          >
+            <option value="en">English</option>
+            <option value="ja">Japanese Language</option>
+            <option value="my">Myanmar Language</option>
+          </select>
+        </Field>
       </div>
       <form
         key={rev}

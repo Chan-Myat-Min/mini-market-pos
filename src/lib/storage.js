@@ -64,6 +64,7 @@ export function defaultSettings() {
     receiptFooter: "Thank you for shopping with us. Come again soon!",
     lowStockThreshold: 8,
     theme: "light",
+    language: "en",
     cashierName: "Cashier 1",
     showSellingCost: true,
   };

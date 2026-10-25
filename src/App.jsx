@@ -5,6 +5,7 @@ import * as settings from "./lib/settings.js";
 import * as sales from "./lib/sales.js";
 import * as cart from "./lib/cart.js";
 import { LABELS, NAV } from "./format.js";
+import { translate } from "./lib/i18n.js";
 import { Receipt } from "./components/Widgets.jsx";
 import DashboardView from "./views/DashboardView.jsx";
 import PosView from "./views/PosView.jsx";
@@ -17,8 +18,13 @@ import SuppliersView from "./views/SuppliersView.jsx";
 import ReportsView from "./views/ReportsView.jsx";
 import SettingsView from "./views/SettingsView.jsx";
 
+const originalText = new WeakMap();
+const translatedText = new WeakMap();
+const originalAttrs = new WeakMap();
+const translatedAttrs = new WeakMap();
+
 function Shell() {
-  const { refresh } = useApp();
+  const { refresh, language } = useApp();
   const [view, setView] = useState("dashboard");
   const [menuOpen, setMenuOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
@@ -28,6 +34,57 @@ function Shell() {
   const [receiptSale, setReceiptSale] = useState(null);
   const searchRef = useRef(null);
   const barcodeRef = useRef(null);
+
+  useEffect(() => {
+    const attrs = ["placeholder", "title", "aria-label"];
+    const visit = (root) => {
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+      let node;
+      while ((node = walker.nextNode())) {
+        const current = node.nodeValue;
+        let known = originalText.has(node) ? originalText.get(node) : current;
+        if (translatedText.has(node) && translatedText.get(node) !== current) known = current;
+        const leading = known.match(/^\s*/)?.[0] || "";
+        const trailing = known.match(/\s*$/)?.[0] || "";
+        const core = known.slice(leading.length, known.length - trailing.length || undefined);
+        originalText.set(node, known);
+        const value = leading + translate(core, language) + trailing;
+        translatedText.set(node, value);
+        if (value !== current) {
+          node.nodeValue = value;
+        }
+      }
+      const elements = root.nodeType === Node.ELEMENT_NODE ? [root, ...root.querySelectorAll("*")] : [...root.querySelectorAll("*")];
+      elements.forEach((el) => attrs.forEach((attr) => {
+        if (!el.hasAttribute(attr)) return;
+        let known = originalAttrs.get(el)?.[attr];
+        const current = el.getAttribute(attr);
+        if (known === undefined) known = current;
+        else if (translatedAttrs.get(el)?.[attr] !== current) known = current;
+        const values = originalAttrs.get(el) || {};
+        values[attr] = known;
+        originalAttrs.set(el, values);
+        const result = translate(known, language);
+        const done = translatedAttrs.get(el) || {};
+        done[attr] = result;
+        translatedAttrs.set(el, done);
+        if (result !== current) {
+          el.setAttribute(attr, result);
+        }
+      }));
+    };
+    visit(document.body);
+    const observer = new MutationObserver((changes) => changes.forEach((change) => {
+      if (change.type === "attributes") visit(change.target);
+      else if (change.type === "characterData") visit(change.target.parentElement || document.body);
+      else change.addedNodes.forEach((node) => {
+        if (node.nodeType === Node.ELEMENT_NODE) visit(node);
+        else if (node.nodeType === Node.TEXT_NODE) visit(node.parentElement || document.body);
+      });
+    }));
+    observer.observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: attrs });
+    return () => observer.disconnect();
+  }, [language]);
 
   const store = settings.getSettings();
 
