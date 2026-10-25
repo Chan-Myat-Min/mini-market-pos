@@ -12,6 +12,8 @@
   --accent-soft: #fbe8dc;
   --danger: #b42318;
   --danger-soft: #fde8e6;
+  --on-action: #ffffff;
+  --toast-bg: #1c2a22;
   --warn: #b54708;
   --warn-soft: #feefc7;
   --ok: #027a48;
@@ -39,11 +41,14 @@
   --accent-soft: #3a2a20;
   --danger: #f97066;
   --danger-soft: #3a1d1b;
+  --on-action: #17211b;
+  --toast-bg: #27352e;
   --warn: #f7b955;
   --warn-soft: #3a2e16;
   --ok: #6ce9a6;
   --ok-soft: #1a3a2c;
   --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  color-scheme: dark;
 }
 
 *,
@@ -165,7 +170,7 @@ img {
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  color: var(--text);
+  color: var(--ink);
   text-align: left;
   cursor: pointer;
 }
@@ -311,6 +316,11 @@ img {
   padding: 10px 12px;
 }
 
+option {
+  color: var(--ink);
+  background: var(--surface);
+}
+
 .textarea {
   min-height: 88px;
   resize: vertical;
@@ -331,17 +341,17 @@ img {
 
 .btn-primary {
   background: var(--brand);
-  color: #fff;
+  color: var(--on-action);
 }
 
 .btn-accent {
   background: var(--accent);
-  color: #fff;
+  color: var(--on-action);
 }
 
 .btn-danger {
   background: var(--danger);
-  color: #fff;
+  color: var(--on-action);
 }
 
 .btn-ghost {
@@ -598,7 +608,7 @@ th {
 }
 
 .toast {
-  background: var(--ink);
+  background: var(--toast-bg);
   color: #fff;
   padding: 12px 14px;
   border-radius: 12px;
