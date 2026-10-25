@@ -109,8 +109,8 @@ function Shell() {
     setTimeout(() => setToasts((list) => list.filter((x) => x.id !== id)), 2800);
   }
 
-  function confirm(message, onYes) {
-    setConfirmState({ message, onYes });
+  function confirm(message, onYes, labels = {}) {
+    setConfirmState({ message, onYes, ...labels });
   }
 
   function go(name) {
@@ -124,6 +124,10 @@ function Shell() {
     toast("Sale " + res.sale.receiptNo + " completed");
     refresh();
     setReceiptSale(res.sale);
+  }
+
+  function requestCompleteSale() {
+    confirm("Complete this sale?", completeSale, { confirmLabel: "OK" });
   }
 
   function printReceipt(sale) {
@@ -150,7 +154,7 @@ function Shell() {
       }
       if (e.key === "F4") {
         e.preventDefault();
-        completeSale();
+        requestCompleteSale();
       }
       if (e.key === "F8") {
         e.preventDefault();
@@ -210,7 +214,7 @@ function Shell() {
                 searchRef={searchRef}
                 barcodeRef={barcodeRef}
                 toast={toast}
-                onComplete={completeSale}
+                onComplete={requestCompleteSale}
                 onClear={() =>
                   confirm("Clear the current cart?", () => {
                     cart.clear();
@@ -256,10 +260,10 @@ function Shell() {
                   fn();
                 }}
               >
-                Confirm
+                {confirmState.confirmLabel || "Confirm"}
               </button>
               <button className="btn btn-ghost" type="button" onClick={() => setConfirmState(null)}>
-                Cancel
+                {confirmState.cancelLabel || "Cancel"}
               </button>
             </div>
           </div>
