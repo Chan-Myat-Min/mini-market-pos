@@ -50,7 +50,7 @@ export function search(query, categoryId) {
   return getProducts().filter((p) => {
     if (categoryId && p.categoryId !== categoryId) return false;
     if (!q) return true;
-    return [p.name, p.sku, p.barcode, categoryName(p.categoryId)].join(" ").toLowerCase().includes(q);
+    return [p.name, p.brand, p.sku, p.barcode, categoryName(p.categoryId)].join(" ").toLowerCase().includes(q);
   });
 }
 

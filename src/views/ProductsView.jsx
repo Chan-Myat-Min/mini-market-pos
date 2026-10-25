@@ -36,7 +36,7 @@ export default function ProductsView({ toast, confirm }) {
         </button>
       </div>
       <div className="toolbar" style={{ marginBottom: 12 }}>
-        <input className="input" placeholder="Search products" value={query} style={{ maxWidth: 240 }} onChange={(e) => setQuery(e.target.value)} />
+        <input className="input" placeholder="Search name, brand, SKU, or barcode" value={query} style={{ maxWidth: 280 }} onChange={(e) => setQuery(e.target.value)} />
         <select className="select" style={{ maxWidth: 180 }} value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
           <option value="">All categories</option>
           {cats.map((c) => (
