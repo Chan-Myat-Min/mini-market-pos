@@ -95,6 +95,7 @@ export function upsert(data) {
   const record = {
     id: data.id || storage.uid("prd"),
     name: String(data.name || "").trim(),
+    brand: String(data.brand || "").trim(),
     sku: String(data.sku || "").trim(),
     barcode: String(data.barcode || "").trim(),
     categoryId: data.categoryId || "cat_other",

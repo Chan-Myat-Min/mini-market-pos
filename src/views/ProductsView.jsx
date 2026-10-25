@@ -73,6 +73,7 @@ export default function ProductsView({ toast, confirm }) {
                   </button>
                 </span>
               </th>
+              <th>Brand</th>
               <th>SKU</th>
               <th>Category</th>
               <th>Selling</th>
@@ -94,6 +95,7 @@ export default function ProductsView({ toast, confirm }) {
                         {p.name}
                       </span>
                     </td>
+                    <td>{p.brand || "—"}</td>
                     <td>{p.sku}</td>
                     <td>{products.categoryName(p.categoryId)}</td>
                     <td>{showSellingCost ? money(p.sellingPriceCents) : "••••"}</td>
@@ -125,7 +127,7 @@ export default function ProductsView({ toast, confirm }) {
               })
             ) : (
               <tr>
-                <td colSpan="8">
+                <td colSpan="9">
                   <div className="empty">No products found.</div>
                 </td>
               </tr>
@@ -148,6 +150,7 @@ export default function ProductsView({ toast, confirm }) {
 function ProductForm({ product, onClose, toast, onSaved }) {
   const p = product || {
     name: "",
+    brand: "",
     sku: "",
     barcode: "",
     categoryId: "",
@@ -177,6 +180,7 @@ function ProductForm({ product, onClose, toast, onSaved }) {
       id: product && product.id,
       createdAt: product && product.createdAt,
       name: form.name.value,
+      brand: form.brand.value,
       sku: form.sku.value,
       barcode: form.barcode.value,
       categoryId: form.categoryId.value,
@@ -202,6 +206,7 @@ function ProductForm({ product, onClose, toast, onSaved }) {
         <h3>{product ? "Edit product" : "Add product"}</h3>
         <form className="form-grid" onSubmit={onSubmit}>
           <Field label="Product name" name="name" defaultValue={p.name} required />
+          <Field label="Brand" name="brand" defaultValue={p.brand || ""} />
           <Field label="SKU" name="sku" defaultValue={p.sku} />
           <Field label="Barcode" name="barcode" defaultValue={p.barcode} />
           <Field label="Category">
