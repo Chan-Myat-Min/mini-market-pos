@@ -1,12 +1,13 @@
+import { useMemo } from "react";
 import { useApp } from "../AppContext.jsx";
 import * as reports from "../lib/reports.js";
 import { money } from "../format.js";
 import { Kpi, WeekChart, SalesTable } from "../components/Widgets.jsx";
 
 export default function DashboardView({ onNavigate, onViewSale }) {
-  useApp();
-  const d = reports.dashboard();
-  const week = reports.last7Days();
+  const { rev } = useApp();
+  const d = useMemo(() => reports.dashboard(), [rev]);
+  const week = useMemo(() => reports.last7Days(), [rev]);
 
   return (
     <section className="view is-active">

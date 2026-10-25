@@ -23,9 +23,10 @@ export function findByCode(code) {
 }
 
 export function stockStatus(product) {
-  const settings = storage.getSettings();
   const stock = Number(product.stock) || 0;
-  const min = Number(product.minStock != null ? product.minStock : settings.lowStockThreshold);
+  const min = Number(
+    product.minStock != null ? product.minStock : storage.getSettings().lowStockThreshold
+  );
   if (stock <= 0) return "out";
   if (stock <= min) return "low";
   return "in";

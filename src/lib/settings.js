@@ -8,7 +8,7 @@ export function saveSettings(partial) {
   const next = Object.assign(storage.getSettings(), partial);
   next.taxPercent = Math.max(0, Number(next.taxPercent) || 0);
   next.lowStockThreshold = Math.max(0, parseInt(next.lowStockThreshold, 10) || 0);
-  if (!next.currencySymbol) next.currencySymbol = "$";
+  if (!next.currencySymbol) next.currencySymbol = next.currency === "MMK" ? "Ks " : "$";
   storage.saveSettings(next);
   applyTheme(next.theme);
   return next;

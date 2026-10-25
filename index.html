@@ -6,7 +6,51 @@
     <title>Crazy Mobile Shop POS</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <main class="app-error" role="status">
+        <h1>Loading Mini Market POS…</h1>
+        <p>The app is starting. This screen will be replaced when it is ready.</p>
+      </main>
+    </div>
+    <noscript>This app needs JavaScript enabled to run.</noscript>
+    <script>
+      const showStartupError = (message, stack) => {
+        const root = document.getElementById("root");
+        if (!root || root.dataset.appReady === "true") return;
+        root.replaceChildren();
+        const panel = document.createElement("main");
+        panel.className = "app-error";
+        panel.setAttribute("role", "alert");
+        const heading = document.createElement("h1");
+        heading.textContent = "The app failed to start";
+        const detail = document.createElement("p");
+        detail.textContent = stack || message || "A required app script could not be loaded.";
+        const button = document.createElement("button");
+        button.className = "btn btn-primary";
+        button.type = "button";
+        button.textContent = "Reload app";
+        button.addEventListener("click", () => window.location.reload());
+        panel.append(heading, detail, button);
+        root.append(panel);
+      };
+      window.addEventListener("error", (event) => {
+        window.__appStartupError = event.message || "A required app script could not be loaded.";
+        showStartupError(window.__appStartupError, event.error && event.error.stack);
+      });
+      window.addEventListener("unhandledrejection", (event) => {
+        const reason = event.reason;
+        window.__appStartupError = reason && reason.message ? reason.message : String(reason);
+        showStartupError(window.__appStartupError);
+      });
+      window.setTimeout(() => {
+        const root = document.getElementById("root");
+        if (!root || root.dataset.appReady === "true") return;
+        showStartupError(
+          window.__appStartupError ||
+            "The app is taking too long to start. Reload the page or restart the development server."
+        );
+      }, 10000);
+    </script>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

@@ -88,6 +88,22 @@ img {
   min-height: 100vh;
 }
 
+.app-error {
+  max-width: 720px;
+  margin: 10vh auto;
+  padding: 24px;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.app-error p {
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+
 .sidebar {
   background: linear-gradient(180deg, #163528 0%, #1f6f4a 100%);
   color: #f6fff9;

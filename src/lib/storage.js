@@ -3,6 +3,7 @@
  * Money is stored and calculated in integer cents to avoid float errors.
  */
 const PREFIX = "mmp_v1_";
+let settingsCache = null;
 
 export const KEYS = {
   products: "products",
@@ -119,17 +120,20 @@ export function saveSuppliers(list) {
   set(KEYS.suppliers, list);
 }
 export function getSettings() {
-  const current = Object.assign(defaultSettings(), get(KEYS.settings, {}));
-  // Upgrade installations that still have the app's original USD default.
-  if (current.currency === "USD") {
-    current.currency = "MMK";
-    if (current.currencySymbol === "$") current.currencySymbol = "Ks ";
-    saveSettings(current);
+  if (!settingsCache) {
+    settingsCache = Object.assign(defaultSettings(), get(KEYS.settings, {}));
+    // Upgrade installations that still have the app's original USD default.
+    if (settingsCache.currency === "USD") {
+      settingsCache.currency = "MMK";
+      if (settingsCache.currencySymbol === "$") settingsCache.currencySymbol = "Ks ";
+      saveSettings(settingsCache);
+    }
   }
-  return current;
+  return Object.assign(defaultSettings(), settingsCache);
 }
 export function saveSettings(settings) {
-  set(KEYS.settings, Object.assign(defaultSettings(), settings));
+  settingsCache = Object.assign(defaultSettings(), settings);
+  set(KEYS.settings, settingsCache);
 }
 export function getCart() {
   return Object.assign(defaultCart(), get(KEYS.cart, {}));

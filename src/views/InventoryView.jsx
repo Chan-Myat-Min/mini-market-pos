@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useApp } from "../AppContext.jsx";
 import * as products from "../lib/products.js";
 import * as inventory from "../lib/inventory.js";
@@ -6,13 +6,14 @@ import { Field } from "../components/Widgets.jsx";
 import { when } from "../format.js";
 
 export default function InventoryView({ toast }) {
-  const { refresh } = useApp();
+  const { refresh, rev } = useApp();
   const [filter, setFilter] = useState("all");
   const [moveType, setMoveType] = useState(null);
-  const catalog = products.getProducts();
-  const shown =
-    filter === "low" ? inventory.lowStock() : filter === "out" ? inventory.outOfStock() : catalog;
-  const hist = inventory.history();
+  const catalog = useMemo(() => products.getProducts(), [rev]);
+  const lowStock = useMemo(() => inventory.lowStock(), [rev]);
+  const outOfStock = useMemo(() => inventory.outOfStock(), [rev]);
+  const shown = filter === "low" ? lowStock : filter === "out" ? outOfStock : catalog;
+  const hist = useMemo(() => inventory.history(), [rev]);
 
   return (
     <section className="view is-active">
@@ -38,10 +39,10 @@ export default function InventoryView({ toast }) {
           All
         </button>
         <button className={"btn" + (filter === "low" ? " btn-primary" : "")} type="button" onClick={() => setFilter("low")}>
-          Low stock ({inventory.lowStock().length})
+          Low stock ({lowStock.length})
         </button>
         <button className={"btn" + (filter === "out" ? " btn-primary" : "")} type="button" onClick={() => setFilter("out")}>
-          Out of stock ({inventory.outOfStock().length})
+          Out of stock ({outOfStock.length})
         </button>
       </div>
       <div className="table-wrap">

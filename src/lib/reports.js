@@ -1,5 +1,4 @@
 import * as products from "./products.js";
-import * as inventory from "./inventory.js";
 import * as sales from "./sales.js";
 
 function ymd(d) {
@@ -39,16 +38,20 @@ export function profitOf(sale) {
 
 export function dashboard() {
   const today = new Date();
-  const todaySales = completedSales().filter((s) => isSameDay(s.createdAt, today));
+  const allSales = sales.getSales();
+  const recent = allSales.slice(0, 8);
+  const todaySales = allSales.filter((s) => s.status === "completed" && isSameDay(s.createdAt, today));
   const catalog = products.getProducts();
+  const lowStock = catalog.filter((p) => products.stockStatus(p) === "low");
+  const outOfStock = catalog.filter((p) => products.stockStatus(p) === "out");
   return {
     todaySalesCents: todaySales.reduce((s, x) => s + x.grandTotalCents, 0),
     todayTransactions: todaySales.length,
     todayProfitCents: todaySales.reduce((s, x) => s + profitOf(x), 0),
     productCount: catalog.length,
-    lowStock: inventory.lowStock(),
-    outOfStock: inventory.outOfStock(),
-    recent: sales.getSales().slice(0, 8),
+    lowStock,
+    outOfStock,
+    recent,
   };
 }
 
@@ -95,15 +98,21 @@ export function bestSellers(limit) {
 }
 
 export function salesByCategory() {
-  const map = {};
+  const totals = new Map();
+  const categoryNames = new Map(products.getCategories().map((category) => [category.id, category.name]));
+  const productCategories = new Map(
+    products.getProducts().map((product) => [
+      product.id,
+      categoryNames.get(product.categoryId) || "Uncategorized",
+    ])
+  );
   completedSales().forEach((s) => {
     s.items.forEach((i) => {
-      const p = products.getById(i.productId);
-      const name = p ? products.categoryName(p.categoryId) : "Other";
-      map[name] = (map[name] || 0) + i.lineTotalCents;
+      const name = productCategories.get(i.productId) || "Other";
+      totals.set(name, (totals.get(name) || 0) + i.lineTotalCents);
     });
   });
-  return Object.entries(map)
+  return [...totals]
     .map(([name, cents]) => ({ name, cents }))
     .sort((a, b) => b.cents - a.cents);
 }
@@ -119,13 +128,16 @@ export function salesByPayment() {
 
 export function last7Days() {
   const days = [];
+  const totals = new Map();
+  completedSales().forEach((sale) => {
+    const key = ymd(sale.createdAt);
+    totals.set(key, (totals.get(key) || 0) + sale.grandTotalCents);
+  });
   for (let i = 6; i >= 0; i--) {
     const d = new Date();
     d.setDate(d.getDate() - i);
     const key = ymd(d);
-    const cents = completedSales()
-      .filter((s) => ymd(s.createdAt) === key)
-      .reduce((sum, s) => sum + s.grandTotalCents, 0);
+    const cents = totals.get(key) || 0;
     days.push({
       label: d.toLocaleDateString(undefined, { weekday: "short" }),
       cents,

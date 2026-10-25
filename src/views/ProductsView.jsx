@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useApp } from "../AppContext.jsx";
 import * as products from "../lib/products.js";
 import * as storage from "../lib/storage.js";
@@ -8,15 +8,18 @@ import { money } from "../format.js";
 import { Field, Thumb } from "../components/Widgets.jsx";
 
 export default function ProductsView({ toast, confirm }) {
-  const { refresh } = useApp();
+  const { refresh, rev } = useApp();
   const [query, setQuery] = useState("");
   const [categoryId, setCategoryId] = useState("");
   const [sortKey, setSortKey] = useState("name");
   const [editing, setEditing] = useState(null);
   const [showSellingCost, setShowSellingCost] = useState(() => settings.getSettings().showSellingCost !== false);
 
-  const list = products.sortProducts(products.search(query, categoryId), sortKey);
-  const cats = products.getCategories();
+  const list = useMemo(
+    () => products.sortProducts(products.search(query, categoryId), sortKey),
+    [query, categoryId, sortKey, rev]
+  );
+  const cats = useMemo(() => products.getCategories(), [rev]);
 
   function toggleSellingCost() {
     const next = !showSellingCost;

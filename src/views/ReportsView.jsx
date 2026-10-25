@@ -1,3 +1,4 @@
+import { useMemo } from "react";
 import { useApp } from "../AppContext.jsx";
 import * as reports from "../lib/reports.js";
 import * as inventory from "../lib/inventory.js";
@@ -5,13 +6,13 @@ import { money, payLabel } from "../format.js";
 import { HBars, Kpi, WeekChart } from "../components/Widgets.jsx";
 
 export default function ReportsView() {
-  useApp();
-  const p = reports.periodStats();
-  const best = reports.bestSellers(8);
-  const cats = reports.salesByCategory();
-  const pays = reports.salesByPayment();
-  const week = reports.last7Days();
-  const low = inventory.lowStock();
+  const { rev } = useApp();
+  const p = useMemo(() => reports.periodStats(), [rev]);
+  const best = useMemo(() => reports.bestSellers(8), [rev]);
+  const cats = useMemo(() => reports.salesByCategory(), [rev]);
+  const pays = useMemo(() => reports.salesByPayment(), [rev]);
+  const week = useMemo(() => reports.last7Days(), [rev]);
+  const low = useMemo(() => inventory.lowStock(), [rev]);
 
   return (
     <section className="view is-active">

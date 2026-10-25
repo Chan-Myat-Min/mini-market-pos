@@ -38,25 +38,20 @@ function Shell() {
 
   useEffect(() => {
     const attrs = ["placeholder", "title", "aria-label"];
-    const visit = (root) => {
-      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-      let node;
-      while ((node = walker.nextNode())) {
-        const current = node.nodeValue;
-        let known = originalText.has(node) ? originalText.get(node) : current;
-        if (translatedText.has(node) && translatedText.get(node) !== current) known = current;
-        const leading = known.match(/^\s*/)?.[0] || "";
-        const trailing = known.match(/\s*$/)?.[0] || "";
-        const core = known.slice(leading.length, known.length - trailing.length || undefined);
-        originalText.set(node, known);
-        const value = leading + translate(core, language) + trailing;
-        translatedText.set(node, value);
-        if (value !== current) {
-          node.nodeValue = value;
-        }
-      }
-      const elements = root.nodeType === Node.ELEMENT_NODE ? [root, ...root.querySelectorAll("*")] : [...root.querySelectorAll("*")];
-      elements.forEach((el) => attrs.forEach((attr) => {
+    const updateText = (node) => {
+      const current = node.nodeValue;
+      let known = originalText.has(node) ? originalText.get(node) : current;
+      if (translatedText.has(node) && translatedText.get(node) !== current) known = current;
+      const leading = known.match(/^\s*/)?.[0] || "";
+      const trailing = known.match(/\s*$/)?.[0] || "";
+      const core = known.slice(leading.length, known.length - trailing.length || undefined);
+      originalText.set(node, known);
+      const value = leading + translate(core, language) + trailing;
+      translatedText.set(node, value);
+      if (value !== current) node.nodeValue = value;
+    };
+    const updateAttributes = (el) => {
+      attrs.forEach((attr) => {
         if (!el.hasAttribute(attr)) return;
         let known = originalAttrs.get(el)?.[attr];
         const current = el.getAttribute(attr);
@@ -69,15 +64,26 @@ function Shell() {
         const done = translatedAttrs.get(el) || {};
         done[attr] = result;
         translatedAttrs.set(el, done);
-        if (result !== current) {
-          el.setAttribute(attr, result);
-        }
-      }));
+        if (result !== current) el.setAttribute(attr, result);
+      });
+    };
+    const visit = (root) => {
+      if (root.nodeType === Node.TEXT_NODE) {
+        updateText(root);
+        return;
+      }
+      const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+      let node;
+      while ((node = walker.nextNode())) updateText(node);
+      if (root.nodeType === Node.ELEMENT_NODE) {
+        updateAttributes(root);
+        root.querySelectorAll("*").forEach(updateAttributes);
+      }
     };
     visit(document.body);
     const observer = new MutationObserver((changes) => changes.forEach((change) => {
-      if (change.type === "attributes") visit(change.target);
-      else if (change.type === "characterData") visit(change.target.parentElement || document.body);
+      if (change.type === "attributes") updateAttributes(change.target);
+      else if (change.type === "characterData") updateText(change.target);
       else change.addedNodes.forEach((node) => {
         if (node.nodeType === Node.ELEMENT_NODE) visit(node);
         else if (node.nodeType === Node.TEXT_NODE) visit(node.parentElement || document.body);
