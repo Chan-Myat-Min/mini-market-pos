@@ -59,8 +59,8 @@ export function defaultSettings() {
     address: "128 Market Street, Downtown",
     phone: "+1 (555) 014-2288",
     taxPercent: 8,
-    currency: "USD",
-    currencySymbol: "$",
+    currency: "MMK",
+    currencySymbol: "Ks ",
     receiptFooter: "Thank you for shopping with us. Come again soon!",
     lowStockThreshold: 8,
     theme: "light",
@@ -119,7 +119,14 @@ export function saveSuppliers(list) {
   set(KEYS.suppliers, list);
 }
 export function getSettings() {
-  return Object.assign(defaultSettings(), get(KEYS.settings, {}));
+  const current = Object.assign(defaultSettings(), get(KEYS.settings, {}));
+  // Upgrade installations that still have the app's original USD default.
+  if (current.currency === "USD") {
+    current.currency = "MMK";
+    if (current.currencySymbol === "$") current.currencySymbol = "Ks ";
+    saveSettings(current);
+  }
+  return current;
 }
 export function saveSettings(settings) {
   set(KEYS.settings, Object.assign(defaultSettings(), settings));
