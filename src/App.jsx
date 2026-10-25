@@ -24,7 +24,7 @@ const originalAttrs = new WeakMap();
 const translatedAttrs = new WeakMap();
 
 function Shell() {
-  const { refresh, language } = useApp();
+  const { refresh, language, setLanguage } = useApp();
   const [view, setView] = useState("dashboard");
   const [menuOpen, setMenuOpen] = useState(false);
   const [shortcutsOpen, setShortcutsOpen] = useState(false);
@@ -184,6 +184,29 @@ function Shell() {
               </button>
             ))}
           </nav>
+          <section className="language-section" aria-label="Languages">
+            <h2 className="language-heading">Languages</h2>
+            <div className="language-options">
+              {[
+                ["en", "English"],
+                ["ja", "Japanese Language"],
+                ["my", "Myanmar Language"],
+              ].map(([code, label]) => (
+                <button
+                  key={code}
+                  className={"nav-btn language-btn" + (language === code ? " is-active" : "")}
+                  type="button"
+                  aria-pressed={language === code}
+                  onClick={() => {
+                    setLanguage(code);
+                    setMenuOpen(false);
+                  }}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </section>
           <div className="sidebar-foot">
             {store.cashierName} · {store.currency}
           </div>

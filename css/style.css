@@ -152,6 +152,29 @@ img {
   background: rgba(255, 255, 255, 0.14);
 }
 
+.language-section {
+  flex-shrink: 0;
+  padding: 0 2px;
+}
+
+.language-heading {
+  margin: 0 10px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  opacity: 0.72;
+  text-transform: uppercase;
+}
+
+.language-options {
+  display: grid;
+  gap: 3px;
+}
+
+.language-btn {
+  width: 100%;
+}
+
 .sidebar-foot {
   margin-top: auto;
   padding: 10px;
