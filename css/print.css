@@ -1,4 +1,9 @@
 @media print {
+  @page {
+    size: 80mm auto;
+    margin: 4mm;
+  }
+
   body * {
     visibility: hidden !important;
   }
@@ -13,7 +18,7 @@
     position: absolute;
     left: 0;
     top: 0;
-    width: 100%;
+    width: 72mm;
     background: #fff;
     color: #000;
   }
@@ -24,7 +29,12 @@
 
   .receipt {
     width: 72mm;
-    margin: 0;
+    margin: 0 auto;
+    padding: 4mm;
     box-shadow: none;
+    color: #000 !important;
+    background: #fff !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
 }

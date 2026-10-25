@@ -702,28 +702,113 @@ th {
   width: 280px;
   margin: 0 auto;
   font-family: var(--mono);
-  font-size: 12px;
+  font-size: 11px;
+  line-height: 1.45;
   color: #111;
   background: #fff;
-  padding: 16px;
+  padding: 18px 16px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.18);
 }
 
-.receipt h4,
-.receipt p {
-  margin: 4px 0;
+.receipt-header,
+.receipt-footer {
   text-align: center;
+}
+
+.receipt-header h4 {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.receipt-store-details {
+  margin-top: 5px;
+  overflow-wrap: anywhere;
+}
+
+.receipt-title {
+  margin-top: 10px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+}
+
+.receipt-divider {
+  border-top: 1px dashed #555;
+  margin: 10px 0;
+}
+
+.receipt-meta > div,
+.receipt-totals > div,
+.receipt-payment > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 3px 0;
+}
+
+.receipt-meta > div span:last-child,
+.receipt-totals > div span:last-child,
+.receipt-payment > div span:last-child {
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.receipt-items {
+  min-width: 0;
+  width: 100%;
+  font-size: 11px;
+}
+
+.receipt-items th {
+  padding: 3px 0 5px;
+  color: #111;
+  background: transparent;
+  border-bottom: 1px dashed #777;
+}
+
+.receipt-items th:last-child,
+.receipt-items td:last-child {
+  text-align: right;
+}
+
+.receipt-items td {
+  padding: 6px 0;
+  border: 0;
+}
+
+.receipt-item-name {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.receipt-item-detail {
+  color: #444;
+  font-size: 10px;
+}
+
+.receipt-item-total {
+  white-space: nowrap;
+  vertical-align: top;
+}
+
+.receipt-totals .receipt-grand-total {
+  margin-top: 7px;
+  padding-top: 6px;
+  border-top: 1px solid #222;
+  font-size: 14px;
+}
+
+.receipt-footer {
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px dashed #777;
+  overflow-wrap: anywhere;
 }
 
 .receipt table {
   min-width: 0;
   width: 100%;
-}
-
-.receipt th,
-.receipt td {
-  padding: 4px 0;
-  border: 0;
-  background: transparent;
 }
 
 .overlay {

@@ -77,53 +77,54 @@ export function Field({ label, name, type = "text", defaultValue, required, min,
 export function Receipt({ sale, store }) {
   return (
     <div className="receipt">
-      <h4>{store.storeName}</h4>
-      <p>
-        {store.address}
-        <br />
-        {store.phone}
-      </p>
-      <p>
-        Receipt {sale.receiptNo}
-        <br />
-        {when(sale.createdAt)}
-        <br />
-        Cashier: {sale.cashier}
-        <br />
-        Customer: {sale.customerName}
-      </p>
-      <table>
+      <header className="receipt-header">
+        <h4>{store.storeName}</h4>
+        <div className="receipt-store-details">
+          {store.address ? <div>{store.address}</div> : null}
+          {store.phone ? <div>{store.phone}</div> : null}
+        </div>
+        <div className="receipt-title">SALE RECEIPT</div>
+      </header>
+      <div className="receipt-divider" />
+      <div className="receipt-meta">
+        <div><span>Receipt:</span><span>{sale.receiptNo}</span></div>
+        <div><span>Date:</span><span>{when(sale.createdAt)}</span></div>
+        <div><span>Cashier:</span><span>{sale.cashier}</span></div>
+        <div><span>Customer:</span><span>{sale.customerName}</span></div>
+      </div>
+      <div className="receipt-divider" />
+      <table className="receipt-items">
+        <thead>
+          <tr><th>Item</th><th>Total</th></tr>
+        </thead>
         <tbody>
           {sale.items.map((i) => (
             <tr key={i.productId + i.name}>
               <td>
-                {i.name}
-                <br />
-                {i.qty} × {money(i.unitPriceCents)}
+                <div className="receipt-item-name">{i.name}</div>
+                <div className="receipt-item-detail">{i.qty} × {money(i.unitPriceCents)}</div>
               </td>
-              <td style={{ textAlign: "right" }}>{money(i.lineTotalCents)}</td>
+              <td className="receipt-item-total">{money(i.lineTotalCents)}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      <p>
-        Subtotal {money(sale.subtotalCents)}
-        <br />
-        Discount {money(sale.discountCents)}
-        <br />
-        Tax {money(sale.taxCents)}
-        <br />
-        <strong>Total {money(sale.grandTotalCents)}</strong>
-        <br />
-        {payLabel(sale.paymentMethod)}
-        <br />
-        Received {money(sale.amountReceivedCents)}
-        <br />
-        Change {money(sale.changeCents)}
-        <br />
-        Status: {sale.status}
-      </p>
-      <p>{store.receiptFooter}</p>
+      <div className="receipt-divider" />
+      <div className="receipt-totals">
+        <div><span>Subtotal</span><span>{money(sale.subtotalCents)}</span></div>
+        {sale.discountCents > 0 ? <div><span>Discount</span><span>-{money(sale.discountCents)}</span></div> : null}
+        {sale.taxCents > 0 ? <div><span>Tax</span><span>{money(sale.taxCents)}</span></div> : null}
+        <div className="receipt-grand-total"><strong>Total Due</strong><strong>{money(sale.grandTotalCents)}</strong></div>
+      </div>
+      <div className="receipt-divider" />
+      <div className="receipt-payment">
+        <div><span>Payment</span><span>{payLabel(sale.paymentMethod)}</span></div>
+        {sale.paymentMethod === "cash" ? <>
+          <div><span>Received</span><span>{money(sale.amountReceivedCents)}</span></div>
+          <div><span>Change</span><span>{money(sale.changeCents)}</span></div>
+        </> : null}
+      </div>
+      {store.receiptFooter ? <footer className="receipt-footer">{store.receiptFooter}</footer> : null}
     </div>
   );
 }
