@@ -37,6 +37,9 @@
   .form-grid {
     grid-template-columns: 1fr;
   }
+  .language-page-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 640px) {

@@ -24,6 +24,7 @@ export const LABELS = {
   suppliers: "Suppliers",
   reports: "Reports",
   settings: "Settings",
+  languages: "Languages",
 };
 
 export const NAV = Object.keys(LABELS);

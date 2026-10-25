@@ -17,6 +17,7 @@ import CustomersView from "./views/CustomersView.jsx";
 import SuppliersView from "./views/SuppliersView.jsx";
 import ReportsView from "./views/ReportsView.jsx";
 import SettingsView from "./views/SettingsView.jsx";
+import LanguagesView from "./views/LanguagesView.jsx";
 
 const originalText = new WeakMap();
 const translatedText = new WeakMap();
@@ -184,29 +185,6 @@ function Shell() {
               </button>
             ))}
           </nav>
-          <section className="language-section" aria-label="Languages">
-            <h2 className="language-heading">Languages</h2>
-            <div className="language-options">
-              {[
-                ["en", "English"],
-                ["ja", "Japanese Language"],
-                ["my", "Myanmar Language"],
-              ].map(([code, label]) => (
-                <button
-                  key={code}
-                  className={"nav-btn language-btn" + (language === code ? " is-active" : "")}
-                  type="button"
-                  aria-pressed={language === code}
-                  onClick={() => {
-                    setLanguage(code);
-                    setMenuOpen(false);
-                  }}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-          </section>
           <div className="sidebar-foot">
             {store.cashierName} · {store.currency}
           </div>
@@ -243,6 +221,7 @@ function Shell() {
             {view === "suppliers" && <SuppliersView {...shared} />}
             {view === "reports" && <ReportsView />}
             {view === "settings" && <SettingsView {...shared} />}
+            {view === "languages" && <LanguagesView language={language} onChange={setLanguage} />}
           </main>
         </div>
       </div>
